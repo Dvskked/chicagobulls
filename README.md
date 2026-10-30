@@ -12,7 +12,7 @@ Sitio web oficial del club **Chicago Bulls** de Haxball. Es un sitio estático m
 - **Resultados** (`resultados.html`): todos los resultados en una sola lista, filtrables por división.
 - **Museo** (`museo.html`): palmarés colectivo y premios individuales.
 
-Divisiones y acentos de color: D1 Chicago Bulls (negro), D2 Windy City Bulls (rojo), D3 Bulls Academy (blanco), D4 Dynasty 96 (amarillo) y D5 The Madhouse (gris claro).
+Divisiones y acentos de color: D1 Chicago Bulls (negro), D2 Windy City Bulls (rojo), D3 Bulls Academy (blanco), D4 Dynasty 96 (amarillo) y D5 The Madhouse (gris claro). Fundador del club: **satan**. Plantillas actuales: 14 jugadores por división (70 en total).
 
 ## Cómo abrir el sitio
 
@@ -58,7 +58,7 @@ Todo se configura en `js/data.js`, dentro del objeto `window.CB`. Después de gu
 ### Club y divisiones
 
 ```js
-club: { name, shortName, subtitle, season, tagline, description }
+club: { name, shortName, subtitle, season, founder, tagline, description }
 
 divisions: [
   {
@@ -163,6 +163,7 @@ Si `photo` queda vacío, la página muestra el espacio reservado con el ícono d
 ## Personalización visual
 
 - **Colores y tipografías**: variables CSS al inicio de `css/base.css` (`--accent`, `--bg`, `--surface`, fuentes, radios).
+- **Estilo**: interfaz plana y sobria, sin degradados ni animaciones decorativas. El logo del header gira 360° cada 12 segundos; el resto del sitio mantiene solo transiciones cortas.
 - **Acento por división**: clases `.tone-d1` … `.tone-d5` en `css/base.css`.
 - **Logo y favicons**: reemplazá `img/logo.png` y regenerá `img/favicon-32.png`, `img/favicon-64.png` e `img/favicon-180.png` con el mismo nombre para conservar las referencias.
 - **Pantalla de carga**: aparece completa en la primera visita de la sesión. Se controla con `sessionStorage` (`cb-loader-seen`); para verla de nuevo, abrí una pestaña nueva o limpiá los datos del sitio.

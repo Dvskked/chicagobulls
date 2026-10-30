@@ -6,10 +6,8 @@
   .nav { gap: 14px; }
   .nav__link { padding-inline: 8px; font-size: 0.64rem; }
   .nav__link::after { left: 8px; right: 8px; }
-  .home-hero h1 { font-size: clamp(3.4rem, 7.2vw, 6rem); }
-  .hero-visual__logo { width: min(340px, 74%); }
-  .division-card { min-height: 310px; }
-  .division-card h3 { font-size: 1.55rem; }
+  .division-card { min-height: 300px; }
+  .division-card h3 { font-size: 1.5rem; }
   .color-grid { grid-template-columns: repeat(5, 1fr); }
 }
 
@@ -50,21 +48,18 @@
   .nav__cta { display: inline-flex; justify-content: center; margin-top: 4px; }
 
   .home-hero { min-height: auto; padding: 62px 0 70px; }
-  .home-hero__grid { grid-template-columns: 1fr; gap: 48px; }
+  .home-hero__grid { grid-template-columns: 1fr; gap: 40px; }
   .home-hero__copy { max-width: 700px; }
   .home-hero__lead { max-width: 620px; }
-  .hero-visual { min-height: 400px; order: 2; }
-  .hero-visual__logo { width: min(310px, 62%); }
-  .hero-visual__ring { width: min(360px, 76%); }
-  .hero-visual__halo { width: min(420px, 88%); }
+  .hero-visual { min-height: auto; order: 2; }
+  .hero-visual__logo { width: min(300px, 62%); }
 
   .home-panels { grid-template-columns: 1fr; }
   .footer__top { grid-template-columns: 1.4fr 1fr 1fr; }
   .footer__col:last-child { grid-column: 1 / -1; }
   .team-hero__grid { grid-template-columns: 1fr 0.7fr; gap: 24px; }
-  .team-hero__emblem { min-height: 250px; }
-  .team-hero__emblem img { width: min(220px, 90%); }
-  .team-hero__watermark { font-size: 8rem; }
+  .team-hero__emblem { min-height: 230px; }
+  .team-hero__emblem img { width: min(210px, 90%); }
   .fixture-layout { grid-template-columns: 1fr; }
   .fixture-side { display: grid; grid-template-columns: 1fr 1fr; }
   .clock-card { height: 100%; }
@@ -92,12 +87,9 @@
   .page-hero__meta div { min-width: 82px; }
   .team-hero { padding: 48px 0 44px; }
   .team-hero__grid { grid-template-columns: 1fr; gap: 20px; }
-  .team-hero__emblem { min-height: 220px; order: -1; }
-  .team-hero__emblem img { width: min(190px, 52%); }
-  .team-hero__emblem::before { width: min(230px, 62%); }
-  .team-hero__emblem::after { width: min(190px, 50%); }
+  .team-hero__emblem { min-height: 200px; order: -1; }
+  .team-hero__emblem img { width: min(180px, 52%); }
   .team-hero h1 { font-size: clamp(2.8rem, 10vw, 4.4rem); }
-  .team-hero__watermark { display: none; }
   .team-hero__meta { gap: 18px; }
   .team-hero__meta strong { font-size: 1.05rem; }
   .division-grid { grid-template-columns: repeat(2, 1fr); }
@@ -133,16 +125,12 @@
   .home-hero__actions .btn { flex: 1 1 auto; }
   .home-hero__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
   .home-hero__stat { min-width: 0; margin: 0; padding: 0; border-right: 0; }
-  .home-hero__stat dd { font-size: 1.7rem; }
-  .hero-visual { min-height: 330px; }
+  .home-hero__stat dd { font-size: 1.5rem; }
+  .hero-visual { min-height: auto; }
   .hero-visual__logo { width: min(250px, 62%); }
-  .hero-visual__ring { width: min(300px, 78%); }
-  .hero-rail a { font-size: 0.54rem; padding: 6px 9px; }
-  .marquee__group { font-size: 0.78rem; gap: 24px; }
-  .marquee__group span { gap: 24px; }
+  .hero-rail a { font-size: 0.56rem; }
   .division-grid { grid-template-columns: 1fr; }
-  .division-card { min-height: 292px; }
-  .division-card__watermark { font-size: 7rem; }
+  .division-card { min-height: 280px; }
   .topbar__meta { justify-content: space-between; }
   .topbar__clock { font-size: 0.58rem; }
   .footer__top { grid-template-columns: 1fr; }
