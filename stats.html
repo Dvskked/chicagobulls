@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stats · Chicago Bulls Haxball</title>
+  <meta name="description" content="Estadísticas de todos los jugadores de Chicago Bulls Haxball: goles, asistencias y vallas invictas.">
+  <meta name="theme-color" content="#070709">
+  <meta property="og:title" content="Stats · Chicago Bulls Haxball">
+  <meta property="og:description" content="Estadísticas de todos los jugadores de Chicago Bulls Haxball: goles, asistencias y vallas invictas.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="img/logo.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="img/favicon-64.png">
+  <link rel="apple-touch-icon" href="img/favicon-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script>
+    (function () {
+      var root = document.documentElement;
+      root.classList.add("js");
+      try {
+        if (sessionStorage.getItem("cb-loader-seen") === "1") root.classList.add("no-loader");
+      } catch (error) {}
+    })();
+  </script>
+  <noscript><style>.loader{display:none!important}.reveal{opacity:1!important;transform:none!important}</style></noscript>
+</head>
+<body class="page-stats">
+<a class="skip-link" href="#main">Saltar al contenido</a>
+
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader__inner">
+    <div class="loader__mark">
+      <img class="loader__logo" src="img/logo.png" alt="" width="800" height="800">
+      <span class="smoke smoke--1"></span>
+      <span class="smoke smoke--2"></span>
+      <span class="smoke smoke--3"></span>
+      <span class="smoke smoke--4"></span>
+      <span class="smoke smoke--5"></span>
+      <span class="smoke smoke--6"></span>
+    </div>
+    <p class="loader__title">Chicago Bulls</p>
+    <p class="loader__sub">Haxball Club</p>
+    <div class="loader__bar"><span></span></div>
+  </div>
+</div>
+
+<div class="site">
+  <header class="site-header">
+    <div class="topbar">
+      <div class="container topbar__inner">
+        <p class="topbar__motto">Cinco divisiones. Un solo escudo.</p>
+        <div class="topbar__meta">
+          <span class="topbar__divisions">D1 · D2 · D3 · D4 · D5</span>
+          <span class="topbar__clock">
+            <span class="live-dot" aria-hidden="true"></span>
+            <time data-clock>--:--</time>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="navbar">
+      <div class="container navbar__inner">
+        <a class="brand" href="index.html" aria-label="Chicago Bulls Haxball, inicio">
+          <img class="brand__logo" src="img/logo.png" alt="" width="800" height="800">
+          <span class="brand__text">
+            <strong>Chicago Bulls</strong>
+            <small>Haxball Club</small>
+          </span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Abrir menú de navegación">
+          <span class="icon-open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></span>
+          <span class="icon-close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></span>
+        </button>
+        <nav class="nav" id="primary-nav" aria-label="Navegación principal">
+          <ul class="nav__list">
+            <li><a class="nav__link" href="index.html" data-nav="home">Inicio</a></li>
+            <li><a class="nav__link" href="categorias.html" data-nav="categorias">Categorías</a></li>
+            <li><a class="nav__link" href="fixture.html" data-nav="fixture">Fixture</a></li>
+            <li><a class="nav__link" href="stats.html" data-nav="stats">Stats</a></li>
+            <li><a class="nav__link" href="resultados.html" data-nav="resultados">Resultados</a></li>
+            <li><a class="nav__link" href="museo.html" data-nav="museo">Museo</a></li>
+          </ul>
+          <a class="btn btn--primary btn--sm nav__cta" href="categorias.html">Ver equipos <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumbs" aria-label="Miga de pan">
+        <a href="index.html">Inicio</a><span aria-hidden="true">/</span><span aria-current="page">Stats</span>
+      </nav>
+      <span class="eyebrow">Rendimiento individual</span>
+      <h1>Stats <span class="text-red">del club</span></h1>
+      <p>Goles, asistencias y vallas invictas de todos los jugadores. Una sola tabla para seguir a las cinco divisiones.</p>
+      <div class="page-hero__meta">
+        <div><span>Jugadores</span><strong data-total-players>58</strong></div>
+        <div><span>Goles</span><strong data-stat-goals>0</strong></div>
+        <div><span>Asistencias</span><strong data-stat-assists>0</strong></div>
+        <div><span>Vallas invictas</span><strong data-stat-cs>0</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="stats-summary">
+        <article class="stat-card"><span>Jugadores registrados</span><strong data-stat-players>0</strong></article>
+        <article class="stat-card"><span>Goles</span><strong data-stat-goals>0</strong></article>
+        <article class="stat-card"><span>Asistencias</span><strong data-stat-assists>0</strong></article>
+        <article class="stat-card"><span>Vallas invictas</span><strong data-stat-cs>0</strong></article>
+      </div>
+
+      <div class="stats-toolbar">
+        <div class="chips" role="group" data-stats-filters aria-label="Filtrar estadísticas por división"></div>
+        <label class="search-field">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <span class="sr-only">Buscar jugador en la tabla</span>
+          <input type="search" data-stats-search placeholder="Buscar jugador..." autocomplete="off">
+        </label>
+      </div>
+
+      <div class="table-card" data-stats-table-card>
+        <div class="table-scroll">
+          <table class="stats-table">
+            <thead>
+              <tr>
+                <th class="rank-head" scope="col">#</th>
+                <th scope="col" aria-sort="none"><button type="button" data-sort="name">Jugador <span class="sort-arrow">↕</span></button></th>
+                <th scope="col" aria-sort="none"><button type="button" data-sort="division">División <span class="sort-arrow">↕</span></button></th>
+                <th class="num" scope="col" aria-sort="none"><button type="button" data-sort="played">PJ <span class="sort-arrow">↕</span></button></th>
+                <th class="num" scope="col" aria-sort="descending"><button type="button" data-sort="goals" class="is-active">G <span class="sort-arrow">↓</span></button></th>
+                <th class="num" scope="col" aria-sort="none"><button type="button" data-sort="assists">A <span class="sort-arrow">↕</span></button></th>
+                <th class="num" scope="col" aria-sort="none"><button type="button" data-sort="cleanSheets">CS <span class="sort-arrow">↕</span></button></th>
+              </tr>
+            </thead>
+            <tbody data-stats-body></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="table-foot">
+        <p class="table-note"><strong>PJ</strong> partidos jugados · <strong>G</strong> goles · <strong>A</strong> asistencias · <strong>CS</strong> vallas invictas. Las estadísticas se completan al finalizar cada jornada.</p>
+        <span class="badge">Temporada 2026</span>
+      </div>
+
+      <div class="empty-state" data-stats-empty hidden>
+        <span class="empty-state__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>
+        <h3>Sin resultados</h3>
+        <p>No hay jugadores que coincidan con ese filtro. Probá con otra búsqueda o seleccioná otra división.</p>
+      </div>
+    </div>
+  </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <a class="brand" href="index.html" aria-label="Chicago Bulls Haxball, inicio">
+            <img class="brand__logo" src="img/logo.png" alt="" width="800" height="800">
+            <span class="brand__text">
+              <strong>Chicago Bulls</strong>
+              <small>Haxball Club</small>
+            </span>
+          </a>
+          <p>Un club de Haxball con cinco divisiones y una sola identidad. Rojo, negro y blanco dentro y fuera de la cancha.</p>
+          <span class="badge">Temporada 2026</span>
+        </div>
+        <div class="footer__col">
+          <h4>Explorar</h4>
+          <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="categorias.html">Categorías</a></li>
+            <li><a href="fixture.html">Fixture</a></li>
+            <li><a href="stats.html">Stats</a></li>
+            <li><a href="resultados.html">Resultados</a></li>
+            <li><a href="museo.html">Museo</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>Divisiones</h4>
+          <ul>
+            <li><a href="d1.html">D1 · Chicago Bulls</a></li>
+            <li><a href="d2.html">D2 · Windy City Bulls</a></li>
+            <li><a href="d3.html">D3 · Bulls Academy</a></li>
+            <li><a href="d4.html">D4 · Dynasty 96</a></li>
+            <li><a href="d5.html">D5 · The Madhouse</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>El club</h4>
+          <p>Chicago Bulls Haxball. Cinco categorías, un mismo escudo y una comunidad que empuja desde la D1 hasta The Madhouse.</p>
+          <p>Sitio no oficial, hecho por y para la comunidad.</p>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p>© <span data-year>2026</span> Chicago Bulls Haxball. Todos los derechos reservados.</p>
+        <p>HTML, CSS y JavaScript · Sin backend.</p>
+      </div>
+    </div>
+  </footer>
+</div>
+
+  <script src="js/data.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
