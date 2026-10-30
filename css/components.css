@@ -647,3 +647,100 @@
   text-transform: uppercase;
 }
 [hidden] { display: none !important; }
+
+/* ---------- Ficha interactiva de jugador · Chicago Bulls ---------- */
+body.is-locked { overflow: hidden; }
+.player-modal[hidden] { display: none !important; }
+.player-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+}
+.player-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .82);
+  backdrop-filter: blur(8px);
+  animation: player-fade .18s ease both;
+}
+.player-modal__panel {
+  --accent: #ce1141;
+  --accent-ink: #fff;
+  --accent-soft: rgba(206,17,65,.18);
+  position: relative;
+  z-index: 1;
+  width: min(100%, 470px);
+  max-height: min(88svh, 720px);
+  overflow: auto;
+  border: 1px solid rgba(255,255,255,.16);
+  border-top: 4px solid var(--accent);
+  border-radius: 18px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(206,17,65,.19), transparent 48%), #101014;
+  box-shadow: 0 28px 100px rgba(0,0,0,.65);
+  animation: player-rise .22s var(--ease) both;
+}
+.player-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  background: rgba(0,0,0,.42);
+  color: #fff;
+  cursor: pointer;
+}
+.player-modal__close:hover { background: var(--red); border-color: var(--red); }
+.player-modal__close svg { width: 17px; height: 17px; }
+.player-modal__content { padding: 30px; }
+.player-modal__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-right: 42px; }
+.player-modal__logo { display: grid; place-items: center; width: 58px; height: 58px; padding: 5px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.04); }
+.player-modal__logo img { width: 100%; height: 100%; object-fit: contain; }
+.player-modal__head .div-badge { max-width: 68%; text-align: right; line-height: 1.35; }
+.player-modal__identity { display: flex; flex-direction: column; align-items: center; padding: 26px 0 24px; text-align: center; }
+.player-ball {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  margin-bottom: 15px;
+  overflow: hidden;
+  border: 5px solid rgba(255,255,255,.88);
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 25%, rgba(255,255,255,.5), transparent 30%), var(--accent);
+  box-shadow: 0 0 0 7px var(--accent-soft), inset -9px -12px 18px rgba(0,0,0,.28), 0 12px 28px rgba(0,0,0,.38);
+}
+.player-ball::before, .player-ball::after { content: ""; position: absolute; width: 135%; height: 2px; background: rgba(0,0,0,.26); transform: rotate(-42deg); }
+.player-ball::after { transform: rotate(42deg); }
+.player-ball__initials { position: relative; z-index: 1; display: grid; place-items: center; width: 57px; height: 57px; border: 2px solid rgba(255,255,255,.55); border-radius: 50%; background: rgba(0,0,0,.25); color: #fff; font-family: var(--font-display); font-size: 1.65rem; font-weight: 800; text-shadow: 0 2px 5px rgba(0,0,0,.45); }
+.player-modal__identity h2 { max-width: 100%; overflow-wrap: anywhere; font-size: clamp(2rem, 7vw, 2.8rem); }
+.player-modal__identity p { margin-top: 5px; color: var(--muted); font-size: .78rem; }
+.player-modal__stats { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 9px; }
+.player-modal__stats > div { padding: 14px 15px; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.035); }
+.player-modal__stats dt { color: var(--muted-2); font-size: .59rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.player-modal__stats dd { margin-top: 2px; color: var(--text); font-family: var(--font-display); font-size: 2rem; font-weight: 800; line-height: 1.1; }
+.player-modal__meta { display: grid; gap: 0; margin-top: 15px; border: 1px solid var(--line); border-radius: 10px; background: rgba(0,0,0,.18); }
+.player-modal__meta > div { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 11px 13px; }
+.player-modal__meta > div + div { border-top: 1px solid var(--line); }
+.player-modal__meta span { color: var(--muted-2); font-size: .62rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.player-modal__meta strong { color: var(--text); font-size: .75rem; text-align: right; }
+.player-modal__foot { margin-top: 18px; color: var(--muted-2); font-size: .62rem; letter-spacing: .08em; text-align: center; text-transform: uppercase; }
+.footer__credit { color: var(--muted-2); }
+.footer__credit strong { color: var(--text); }
+@keyframes player-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes player-rise { from { opacity: 0; transform: translateY(12px) scale(.98); } to { opacity: 1; transform: none; } }
+@media (max-width: 520px) {
+  .player-modal { padding: 12px; }
+  .player-modal__content { padding: 22px 18px; }
+  .player-modal__logo { width: 48px; height: 48px; }
+  .player-ball { width: 88px; height: 88px; }
+  .player-modal__stats > div { padding: 11px 12px; }
+}
