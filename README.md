@@ -6,7 +6,7 @@ Sitio web oficial del club **Chicago Bulls** de Haxball. Es un sitio estático m
 
 - **Inicio** (`index.html`): presentación del club, las cinco divisiones y accesos rápidos.
 - **Categorías** (`categorias.html`): selector de D1 a D5.
-- **Plantillas** (`d1.html` a `d5.html`): jugadores de cada división, buscador y espacio para la foto grupal.
+- **Plantillas** (`d1.html` a `d5.html`): jugadores clickeables, buscador, fichas emergentes con estadísticas y espacio para la foto grupal.
 - **Fixture** (`fixture.html`): calendario mensual, reloj en vivo y horarios en la zona local del visitante.
 - **Stats** (`stats.html`): tabla de PJ, goles, asistencias y vallas invictas (CS), con filtros y ordenamiento.
 - **Resultados** (`resultados.html`): todos los resultados en una sola lista, filtrables por división.
@@ -159,6 +159,12 @@ Campos admitidos en cada premio: `title`, `year`, `division` y `description` (op
 ```
 
 Si `photo` queda vacío, la página muestra el espacio reservado con el ícono de cámara. La imagen se recorta automáticamente (`object-fit: cover`) y mantiene una altura máxima de 620 px.
+
+## Fichas de jugadores
+
+En cada plantilla, seleccioná un jugador para abrir su ficha estilo Chicago Bulls. Incluye el escudo, avatar con hasta dos iniciales, pelota con el color de la división, división y dorsal, además de PJ, goles, asistencias y CS. Las estadísticas que no se hayan cargado aparecen en 0. Para editarlas, usá `stats` en `js/data.js` como se explica en la sección Estadísticas.
+
+El pie de página acredita el diseño y desarrollo a **Nqptun**, creador de esta página.
 
 ## Personalización visual
 
