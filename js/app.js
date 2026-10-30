@@ -75,6 +75,7 @@
     trophy: svg('<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"/><path d="M7 5H4v2a3 3 0 0 0 3 3M17 5h3v2a3 3 0 0 1-3 3"/>'),
     medal: svg('<circle cx="12" cy="14" r="5"/><path d="m8 10-3-7h5l2 5 2-5h5l-3 7"/>'),
     camera: svg('<path d="M14.5 5 13 3h-2L9.5 5H5a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-4.5Z"/><circle cx="12" cy="12" r="3.5"/>'),
+    close: svg('<path d="m6 6 12 12M18 6 6 18"/>'),
   };
 
   /* ---------- Carga inicial ---------- */
@@ -235,6 +236,9 @@
     $$("[data-founder]").forEach((element) => {
       element.textContent = CLUB.founder || "satan";
     });
+    $$("[data-author]").forEach((element) => {
+      element.textContent = CLUB.author || "Nqptun";
+    });
   }
 
   /* ---------- Tarjetas de divisiones ---------- */
@@ -310,6 +314,100 @@
     });
   }
 
+  /* ---------- Ficha de jugador ---------- */
+  const playerCardModal = (() => {
+    let modal = null;
+    let panel = null;
+    let content = null;
+    let site = null;
+    let triggerElement = null;
+
+    const statRow = (label, value) =>
+      `<div><dt>${esc(label)}</dt><dd>${Number(value) || 0}</dd></div>`;
+
+    const build = () => {
+      if (modal) return;
+      modal = document.createElement("div");
+      modal.className = "player-modal";
+      modal.id = "player-modal";
+      modal.hidden = true;
+      modal.innerHTML = `
+        <div class="player-modal__backdrop" data-player-close></div>
+        <div class="player-modal__panel" role="dialog" aria-modal="true" aria-labelledby="player-modal-name">
+          <button class="player-modal__close" type="button" data-player-close aria-label="Cerrar ficha">${icons.close}</button>
+          <div class="player-modal__content" data-player-content></div>
+        </div>`;
+      document.body.appendChild(modal);
+      panel = modal.querySelector(".player-modal__panel");
+      content = modal.querySelector("[data-player-content]");
+      site = document.querySelector(".site");
+
+      modal.addEventListener("click", (event) => {
+        if (event.target.closest("[data-player-close]")) close();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") close();
+      });
+    };
+
+    const close = () => {
+      if (!modal || modal.hidden) return;
+      modal.hidden = true;
+      document.body.classList.remove("is-locked");
+      if (site) site.inert = false;
+      const previous = triggerElement;
+      triggerElement = null;
+      if (previous) previous.focus({ preventScroll: true });
+    };
+
+    const open = (trigger) => {
+      const divisionId = trigger.dataset.division;
+      const name = trigger.dataset.playerName;
+      const division = DIVISION_BY_ID.get(divisionId);
+      if (!division || !name) return;
+
+      build();
+
+      const stats = playerStats(divisionId, name);
+      const number = (Number(trigger.dataset.playerIndex) || 0) + 1;
+
+      content.innerHTML = `
+        <div class="player-modal__head">
+          <span class="player-modal__logo">
+            <img src="img/logo.png" alt="Escudo de ${esc(CLUB.name || "Chicago Bulls")} Haxball">
+          </span>
+          <span class="div-badge">${esc(division.label)} · ${esc(division.name)}</span>
+        </div>
+        <div class="player-modal__identity">
+          <span class="player-ball" aria-hidden="true"><span class="player-ball__initials">${esc(initials(name))}</span></span>
+          <h2 id="player-modal-name">${esc(name)}</h2>
+          <p>Jugador de ${esc(division.name)}</p>
+        </div>
+        <dl class="player-modal__stats">
+          ${statRow("Partidos jugados", stats.played)}
+          ${statRow("Goles", stats.goals)}
+          ${statRow("Asistencias", stats.assists)}
+          ${statRow("CS", stats.cleanSheets)}
+        </dl>
+        <div class="player-modal__meta">
+          <div><span>División</span><strong>${esc(division.label)} · ${esc(division.name)}</strong></div>
+          <div><span>Colores</span><strong>${esc(division.colors)}</strong></div>
+          <div><span>Dorsal</span><strong>#${pad2(number)}</strong></div>
+        </div>
+        <p class="player-modal__foot">${esc(CLUB.name || "Chicago Bulls")} Haxball · ${esc(CLUB.season || "Temporada 2026")}</p>`;
+
+      panel.className = `player-modal__panel tone-${divisionId}`;
+      triggerElement = trigger;
+      modal.hidden = false;
+      document.body.classList.add("is-locked");
+      if (site) site.inert = true;
+      const closeButton = modal.querySelector(".player-modal__close");
+      if (closeButton) closeButton.focus({ preventScroll: true });
+    };
+
+    return { open };
+  })();
+
   /* ---------- Página de equipo ---------- */
   function initTeamPage() {
     const teamId = document.body.dataset.division;
@@ -355,14 +453,18 @@
         .filter(({ name }) => !query || norm(name).includes(query));
 
       grid.innerHTML = filtered.map(({ name, index }) => `
-        <li class="player-card tone-${teamId}">
-          <span class="player-card__num">${pad2(index + 1)}</span>
-          <span class="player-card__avatar" aria-hidden="true">${esc(initials(name))}</span>
-          <span class="player-card__info">
-            <strong>${esc(name)}</strong>
-            <span>Jugador · ${esc(division.label)}</span>
-          </span>
-          <span class="player-card__div">${esc(division.label)}</span>
+        <li class="roster-item">
+          <button class="player-card tone-${teamId}" type="button" data-player-open
+                  data-division="${esc(teamId)}" data-player-index="${index}" data-player-name="${esc(name)}"
+                  aria-label="Ver ficha de ${esc(name)}, ${esc(division.label)}">
+            <span class="player-card__num">${pad2(index + 1)}</span>
+            <span class="player-card__avatar" aria-hidden="true">${esc(initials(name))}</span>
+            <span class="player-card__info">
+              <strong>${esc(name)}</strong>
+              <span>Jugador · ${esc(division.label)}</span>
+            </span>
+            <span class="player-card__div">${esc(division.label)}</span>
+          </button>
         </li>`).join("");
 
       grid.hidden = filtered.length === 0;
@@ -378,6 +480,11 @@
         render();
       });
     }
+
+    grid.addEventListener("click", (event) => {
+      const trigger = event.target.closest("[data-player-open]");
+      if (trigger) playerCardModal.open(trigger);
+    });
 
     render();
   }

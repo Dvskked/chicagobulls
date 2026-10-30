@@ -11,6 +11,7 @@ window.CB = {
     subtitle: "Haxball Club",
     season: "Temporada 2026",
     founder: "satan",
+    author: "Nqptun",
     tagline: "Cinco divisiones. Un solo escudo.",
     description:
       "Organización de Haxball con cinco divisiones, una identidad y la misma hambre de competir.",
