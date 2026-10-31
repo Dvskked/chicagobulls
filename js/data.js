@@ -24,6 +24,7 @@ window.CB = {
   */
   leagues: [
     { id: "mls", name: "MLS", color: "#3ddc84" },
+    { id: "vivet", name: "Vivet", color: "#550404" },
     { id: "haxcol", name: "HaxCol", color: "#4d8dff" },
     { id: "laliga", name: "LaLiga", color: "#ff4d5e" },
     { id: "haxcl", name: "HaxCL", color: "#b57bff" },
