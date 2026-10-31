@@ -18,6 +18,18 @@ window.CB = {
       "Club de Haxball pensado para competir al nivel de HaxCol y American Futsal (AF), con las listas oficiales de sus cinco divisiones ya confirmadas.",
   },
 
+  /* ---------- Ligas y competencias ----------
+     El color se usa en el calendario, la leyenda y los bordes de cada
+     partido/resultado para identificar la liga de un vistazo.
+  */
+  leagues: [
+    { id: "mls", name: "MLS", color: "#3ddc84" },
+    { id: "haxcol", name: "HaxCol", color: "#4d8dff" },
+    { id: "laliga", name: "LaLiga", color: "#ff4d5e" },
+    { id: "haxcl", name: "HaxCL", color: "#b57bff" },
+    { id: "amistoso", name: "Amistoso", color: "#9aa0ad" },
+  ],
+
   /* ---------- Divisiones ----------
      id: se usa para las páginas (d1.html, d2.html...)
      tone: color de acento definido en css/base.css (.tone-d1 ... .tone-d5)
@@ -184,7 +196,14 @@ window.CB = {
      La clave siempre es "division|nombre exacto del jugador".
   */
   stats: {
-    // "d1|Brooksby": { played: 0, goals: 0, assists: 0, cleanSheets: 0 },
+    "d2|signal": { played: 1, goals: 1, assists: 1, cleanSheets: 0 },
+    "d3|Disrupted": { played: 1, goals: 3, assists: 1, cleanSheets: 0 },
+    "d2|lalkkk": { played: 1, goals: 0, assists: 2, cleanSheets: 0 },
+    "d2|Nqptun": { played: 1, goals: 0, assists: 0, cleanSheets: 1 },
+    "d2|Six:)": { played: 1, goals: 0, assists: 1, cleanSheets: 1 },
+    // Resultados.txt: el amistoso no genera stats.
+    // Jugadores mencionados fuera de plantilla (sin stats): swarovski (D1),
+    // satan, hitlaoro y lalk. Solo quedan documentados en el informe.
   },
 
   /* ---------- Fixture ----------
@@ -199,7 +218,64 @@ window.CB = {
        venue: "home", // "home" = local, "away" = visitante
      },
   */
-  fixtures: [],
+  fixtures: [
+    {
+      date: "2026-10-24T20:00:00-05:00",
+      division: "d2",
+      squads: ["d2", "d3"],
+      league: "mls",
+      competition: "Liga",
+      opponent: "Cereal killer's",
+      venue: "away",
+    },
+    {
+      date: "2026-10-26T20:20:00-05:00",
+      division: "d2",
+      squads: ["d2", "d3", "d4", "d5"],
+      league: "haxcol",
+      competition: "Copa promesa",
+      opponent: "Red devils",
+      venue: "home",
+      note: "Play offs",
+    },
+    {
+      date: "2026-10-30T19:15:00-05:00",
+      division: "d2",
+      squads: ["d2", "d3"],
+      league: "mls",
+      competition: "Liga",
+      opponent: "Juan Aurich",
+      venue: "home",
+    },
+    {
+      date: "2026-10-31T19:00:00-05:00",
+      division: "d2",
+      squads: ["d2", "d3", "d4", "d5"],
+      league: "haxcol",
+      competition: "Copa promesa",
+      opponent: "Rappi Gang",
+      venue: "home",
+      note: "Play offs",
+    },
+    {
+      date: "2026-10-31T20:10:00-05:00",
+      division: "d2",
+      squads: ["d2", "d3", "d4", "d5"],
+      league: "laliga",
+      competition: "Liga",
+      opponent: "Deportivo de la Coruña",
+      venue: "home",
+    },
+    {
+      date: "2026-10-31T18:00:00-05:00",
+      division: "d3",
+      squads: ["d3", "d4", "d5"],
+      league: "haxcl",
+      competition: "Liga",
+      opponent: "Juventus",
+      venue: "home",
+    },
+  ],
 
   /* ---------- Resultados ----------
      Todos los resultados van en una sola lista, sin separar por división.
@@ -214,7 +290,44 @@ window.CB = {
        venue: "home",
      },
   */
-  results: [],
+  results: [
+    {
+      date: null,
+      dateLabel: "Fecha sin registrar",
+      division: "d1",
+      squads: ["d1"],
+      league: "amistoso",
+      competition: "Amistoso",
+      opponent: "Chelsea",
+      scoreFor: 3,
+      scoreAgainst: 2,
+      venue: "home",
+      players: ["aefy", "swarovski", "slurpy", "guns"],
+      note: "Sin stats por ser amistoso.",
+    },
+    {
+      date: "2026-10-24T20:00:00-05:00",
+      division: "d2",
+      squads: ["d2", "d3"],
+      league: "mls",
+      competition: "Liga",
+      opponent: "Cereal Killers",
+      scoreFor: 4,
+      scoreAgainst: 3,
+      venue: "away",
+    },
+    {
+      date: "2026-10-26T20:20:00-05:00",
+      division: "d2",
+      squads: ["d2", "d3", "d4", "d5"],
+      league: "haxcol",
+      competition: "Copa promesa",
+      opponent: "Red Devills Academy",
+      scoreFor: 11,
+      scoreAgainst: 5,
+      venue: "away",
+    },
+  ],
 
   /* ---------- Museo ----------
      collective = títulos colectivos · individual = premios individuales.

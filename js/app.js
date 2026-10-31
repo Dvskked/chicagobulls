@@ -13,6 +13,30 @@
   const STAFF = DATA.staff || null;
   const STAFF_MEMBERS = STAFF && Array.isArray(STAFF.members) ? STAFF.members : [];
   const DIVISION_BY_ID = new Map(DIVISIONS.map((division) => [division.id, division]));
+  const LEAGUES = Array.isArray(DATA.leagues) ? DATA.leagues : [];
+  const LEAGUE_BY_ID = new Map(LEAGUES.map((league) => [league.id, league]));
+  const FALLBACK_LEAGUE = { id: "otros", name: "Partido", color: "#8b8b96" };
+
+  const leagueFor = (item) => {
+    if (item && item.league && LEAGUE_BY_ID.has(item.league)) return LEAGUE_BY_ID.get(item.league);
+    const competition = norm(item && item.competition);
+    return LEAGUES.find((league) => competition.includes(norm(league.name))) || FALLBACK_LEAGUE;
+  };
+
+  const squadsFor = (item) => {
+    const list = Array.isArray(item && item.squads)
+      ? item.squads
+      : item && item.division
+        ? [item.division]
+        : [];
+    return list.filter((id) => DIVISION_BY_ID.has(id));
+  };
+
+  const squadLabel = (item) =>
+    squadsFor(item).map((id) => DIVISION_BY_ID.get(id).label).join(" · ");
+
+  const itemMatchesDivision = (item, divisionId) =>
+    divisionId === "all" || squadsFor(item).includes(divisionId);
 
   const $ = (selector, context = document) => context.querySelector(selector);
   const $$ = (selector, context = document) => Array.from(context.querySelectorAll(selector));
@@ -50,6 +74,7 @@
   };
 
   const toDate = (value) => {
+    if (value === null || value === undefined || value === "") return null;
     const date = new Date(value);
     return Number.isNaN(date.getTime()) ? null : date;
   };
@@ -249,6 +274,38 @@
     $$("[data-author]").forEach((element) => {
       element.textContent = CLUB.author || "Nqptun";
     });
+  }
+
+  /* ---------- Imagen aleatoria del inicio ---------- */
+  function initHeroPhoto() {
+    const image = $("[data-hero-photo]");
+    if (!image) return;
+    const options = DIVISIONS.filter((division) => division.photo);
+    if (!options.length) return;
+
+    let last = "";
+    try {
+      last = sessionStorage.getItem("cb-hero-photo") || "";
+    } catch (error) {
+      /* sessionStorage puede estar bloqueado; se elige igual. */
+    }
+
+    let pool = options.filter((division) => division.id !== last);
+    if (!pool.length) pool = options;
+    const pick = pool[Math.floor(Math.random() * pool.length)];
+
+    image.src = pick.photo;
+    image.alt = `Plantel de ${pick.name} en la ${pick.label}`;
+    const shot = image.closest(".hero-shot");
+    if (shot) shot.dataset.division = pick.id;
+    const label = $("[data-hero-photo-label]");
+    if (label) label.textContent = `${pick.label} · ${pick.name}`;
+
+    try {
+      sessionStorage.setItem("cb-hero-photo", pick.id);
+    } catch (error) {
+      /* Sin sessionStorage la rotación sigue funcionando en cada carga. */
+    }
   }
 
   /* ---------- Tarjetas de divisiones ---------- */
@@ -1240,6 +1297,7 @@
     initHeader();
     initClocks();
     initStaticContent();
+    initHeroPhoto();
     renderDivisions();
     renderStaffFeature();
     renderDivisionSwitcher();
