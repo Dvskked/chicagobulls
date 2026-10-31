@@ -241,6 +241,7 @@ h1, h2, h3, h4 {
 .tone-d3 { --accent: #f7f7f9; --accent-ink: #0a0a0d; --accent-soft: rgba(247, 247, 249, 0.11); }
 .tone-d4 { --accent: #ffc72c; --accent-ink: #141004; --accent-soft: rgba(255, 199, 44, 0.14); }
 .tone-d5 { --accent: #c6cbd4; --accent-ink: #0a0a0d; --accent-soft: rgba(198, 203, 212, 0.14); }
+.tone-dt { --accent: #d8b56a; --accent-ink: #171105; --accent-soft: rgba(216, 181, 106, 0.16); }
 
 /* ---------- 05. Loader ---------- */
 .loader {
@@ -397,7 +398,7 @@ h1, h2, h3, h4 {
   height: 44px;
   object-fit: contain;
 }
-.navbar .brand__logo { animation: logo-spin 12s var(--ease) infinite; }
+.navbar .brand__logo { animation: logo-spin 3s linear infinite; }
 .brand__text { display: flex; flex-direction: column; line-height: 1; }
 .brand__text strong {
   font-family: var(--font-display);
@@ -509,8 +510,8 @@ h1, h2, h3, h4 {
 @keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes loader-bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @keyframes logo-spin {
-  0%, 88% { transform: rotate(0deg); }
-  96%, 100% { transform: rotate(360deg); }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 @keyframes smoke-rise {
   0% { opacity: 0; transform: translate(0, 10px) scale(0.35); }

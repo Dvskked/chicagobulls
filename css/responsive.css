@@ -6,9 +6,7 @@
   .nav { gap: 14px; }
   .nav__link { padding-inline: 8px; font-size: 0.64rem; }
   .nav__link::after { left: 8px; right: 8px; }
-  .division-card { min-height: 300px; }
   .division-card h3 { font-size: 1.5rem; }
-  .color-grid { grid-template-columns: repeat(5, 1fr); }
 }
 
 @media (max-width: 1020px) {
@@ -16,7 +14,6 @@
   .nav { gap: 8px; }
   .nav__cta { display: none; }
   .division-grid { grid-template-columns: repeat(3, 1fr); }
-  .color-grid { grid-template-columns: repeat(3, 1fr); }
   .division-switcher { grid-template-columns: repeat(3, 1fr); }
 }
 
@@ -52,7 +49,9 @@
   .home-hero__copy { max-width: 700px; }
   .home-hero__lead { max-width: 620px; }
   .hero-visual { min-height: auto; order: 2; }
-  .hero-visual__logo { width: min(300px, 62%); }
+  .hero-visual__logo { width: clamp(68px, 10vw, 84px); height: clamp(68px, 10vw, 84px); }
+  .staff-feature { grid-template-columns: 1fr; }
+  .staff-feature__media { min-height: 250px; }
 
   .home-panels { grid-template-columns: 1fr; }
   .footer__top { grid-template-columns: 1.4fr 1fr 1fr; }
@@ -92,8 +91,10 @@
   .team-hero h1 { font-size: clamp(2.8rem, 10vw, 4.4rem); }
   .team-hero__meta { gap: 18px; }
   .team-hero__meta strong { font-size: 1.05rem; }
+  .hero-shot { transform: none; }
+  .staff-feature__copy { padding: 22px; }
+  .staff-feature__media { min-height: 210px; }
   .division-grid { grid-template-columns: repeat(2, 1fr); }
-  .division-card { min-height: 300px; }
   .pillar-grid { grid-template-columns: 1fr; }
   .cta-band { flex-direction: column; align-items: flex-start; padding: 34px 28px; }
   .footer__top { grid-template-columns: 1fr 1fr; gap: 28px; }
@@ -104,7 +105,6 @@
   .stat-card strong { font-size: 2rem; }
   .stats-toolbar { flex-direction: column; align-items: stretch; }
   .stats-toolbar .search-field { width: 100%; }
-  .color-grid { grid-template-columns: repeat(2, 1fr); }
   .division-switcher { grid-template-columns: repeat(2, 1fr); }
   .team-photo__frame { min-height: 300px; }
   .team-photo__content strong { font-size: 1.4rem; }
@@ -127,10 +127,9 @@
   .home-hero__stat { min-width: 0; margin: 0; padding: 0; border-right: 0; }
   .home-hero__stat dd { font-size: 1.5rem; }
   .hero-visual { min-height: auto; }
-  .hero-visual__logo { width: min(250px, 62%); }
+  .hero-visual__logo { top: -18px; right: -4px; width: 64px; height: 64px; }
   .hero-rail a { font-size: 0.56rem; }
   .division-grid { grid-template-columns: 1fr; }
-  .division-card { min-height: 280px; }
   .topbar__meta { justify-content: space-between; }
   .topbar__clock { font-size: 0.58rem; }
   .footer__top { grid-template-columns: 1fr; }
@@ -163,7 +162,6 @@
   .museum-quote { padding: 24px; }
   .empty-state { padding: 40px 18px; }
   .empty-state h3 { font-size: 1.3rem; }
-  .color-grid { grid-template-columns: 1fr; }
   .division-switcher { grid-template-columns: 1fr; }
   .stats-summary { gap: 8px; }
   .stat-card { padding: 16px; }

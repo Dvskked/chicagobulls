@@ -10,6 +10,8 @@
   const CLUB = DATA.club || {};
   const DIVISIONS = Array.isArray(DATA.divisions) ? DATA.divisions : [];
   const ROSTERS = DATA.rosters || {};
+  const STAFF = DATA.staff || null;
+  const STAFF_MEMBERS = STAFF && Array.isArray(STAFF.members) ? STAFF.members : [];
   const DIVISION_BY_ID = new Map(DIVISIONS.map((division) => [division.id, division]));
 
   const $ = (selector, context = document) => context.querySelector(selector);
@@ -64,6 +66,10 @@
 
   const totalPlayers = () =>
     DIVISIONS.reduce((total, division) => total + rosterFor(division.id).length, 0);
+
+  const totalStaff = () => STAFF_MEMBERS.length;
+
+  const playingStaff = () => STAFF_MEMBERS.filter((member) => member.plays && DIVISION_BY_ID.has(member.plays));
 
   const svg = (content) =>
     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${content}</svg>`;
@@ -125,6 +131,7 @@
     const pageMap = {
       "index.html": "home",
       "categorias.html": "categorias",
+      "dt.html": "dt",
       "fixture.html": "fixture",
       "stats.html": "stats",
       "resultados.html": "resultados",
@@ -233,6 +240,9 @@
     $$("[data-total-divisions]").forEach((element) => {
       element.textContent = pad2(DIVISIONS.length);
     });
+    $$("[data-total-staff]").forEach((element) => {
+      element.textContent = String(totalStaff());
+    });
     $$("[data-founder]").forEach((element) => {
       element.textContent = CLUB.founder || "satan";
     });
@@ -244,22 +254,31 @@
   /* ---------- Tarjetas de divisiones ---------- */
   function divisionCard(division) {
     const count = rosterFor(division.id).length;
+    const photo = division.photo
+      ? `<img src="${esc(division.photo)}" alt="Foto oficial de ${esc(division.name)} · ${esc(division.label)}" loading="lazy" decoding="async" width="1024" height="572">`
+      : "";
     return `
       <a class="division-card tone-${division.id} reveal" href="${division.id}.html"
          aria-label="Ver la plantilla de ${esc(division.name)}, ${esc(division.label)}">
-        <span class="division-card__top">
-          <span class="badge badge--accent">${esc(division.label)}</span>
-          <span class="division-card__count">${count} jugadores</span>
+        <span class="division-card__media${photo ? " has-photo" : ""}">
+          ${photo}
+          <span class="division-card__stamp">Plantilla oficial</span>
+          <span class="division-card__logo" aria-hidden="true">
+            <img src="img/logo.png" alt="" width="800" height="800">
+          </span>
         </span>
-        <div class="division-card__body">
-          <span class="division-card__role">${esc(division.role)}</span>
+        <span class="division-card__body">
+          <span class="division-card__top">
+            <span class="division-card__role">${esc(division.role)}</span>
+            <span class="division-card__count">${count} jugadores</span>
+          </span>
           <h3>${esc(division.name)}</h3>
           <p>${esc(division.description)}</p>
-          <div class="division-card__meta">
-            <span class="division-card__dot"></span>${esc(division.colors)}
-          </div>
-        </div>
-        <span class="division-card__link">Ver plantilla ${icons.arrow}</span>
+        </span>
+        <span class="division-card__link">
+          <span><span class="div-badge">${esc(division.label)}</span> Ver plantilla</span>
+          ${icons.arrow}
+        </span>
       </a>`;
   }
 
@@ -267,6 +286,34 @@
     $$("[data-divisions]").forEach((container) => {
       container.innerHTML = DIVISIONS.map(divisionCard).join("");
     });
+  }
+
+  /* ---------- Tarjeta del cuerpo técnico ---------- */
+  function renderStaffFeature() {
+    const container = $("[data-staff-feature]");
+    if (!container || !STAFF) return;
+    const photo = STAFF.photo
+      ? `<img src="${esc(STAFF.photo)}" alt="Foto oficial del ${esc(STAFF.name)}" loading="lazy" decoding="async" width="1024" height="572">`
+      : "";
+    container.innerHTML = `
+      <article class="staff-feature tone-dt reveal">
+        <figure class="staff-feature__media${photo ? " has-photo" : ""}">
+          ${photo}
+          <span class="division-card__logo" aria-hidden="true">
+            <img src="img/logo.png" alt="" width="800" height="800">
+          </span>
+          <figcaption>${esc(STAFF.label)} · ${esc(CLUB.season || "Temporada 2026")}</figcaption>
+        </figure>
+        <div class="staff-feature__copy">
+          <span class="eyebrow">Cuerpo técnico</span>
+          <h2>${esc(STAFF.name)}</h2>
+          <p>${esc(STAFF.description)}</p>
+          <ul class="staff-feature__names">
+            ${STAFF_MEMBERS.map((member) => `<li>${esc(member.name)}</li>`).join("")}
+          </ul>
+          <a class="btn btn--ghost btn--sm" href="${esc(STAFF.id)}.html">Ver cuerpo técnico ${icons.arrow}</a>
+        </div>
+      </article>`;
   }
 
   function renderDivisionSwitcher() {
@@ -283,18 +330,6 @@
           <small>${rosterFor(division.id).length} jugadores</small>
         </a>`;
     }).join("");
-  }
-
-  function renderColorGrid() {
-    const container = $("[data-color-grid]");
-    if (!container) return;
-    container.innerHTML = DIVISIONS.map((division) => `
-      <article class="color-card tone-${division.id}">
-        <span class="color-card__swatch${division.id === "d1" ? " color-card__swatch--dark" : ""}"></span>
-        <span>${esc(division.label)}</span>
-        <h3>${esc(division.name)}</h3>
-        <p>${esc(division.colors)}</p>
-      </article>`).join("");
   }
 
   /* ---------- Chips de división reutilizables ---------- */
@@ -363,6 +398,7 @@
     const open = (trigger) => {
       const divisionId = trigger.dataset.division;
       const name = trigger.dataset.playerName;
+      const displayName = trigger.dataset.playerLabel || name;
       const division = DIVISION_BY_ID.get(divisionId);
       if (!division || !name) return;
 
@@ -379,8 +415,8 @@
           <span class="div-badge">${esc(division.label)} · ${esc(division.name)}</span>
         </div>
         <div class="player-modal__identity">
-          <span class="player-ball" aria-hidden="true"><span class="player-ball__initials">${esc(initials(name))}</span></span>
-          <h2 id="player-modal-name">${esc(name)}</h2>
+          <span class="player-ball" aria-hidden="true"><span class="player-ball__initials">${esc(initials(displayName))}</span></span>
+          <h2 id="player-modal-name">${esc(displayName)}</h2>
           <p>Jugador de ${esc(division.name)}</p>
         </div>
         <dl class="player-modal__stats">
@@ -391,7 +427,7 @@
         </dl>
         <div class="player-modal__meta">
           <div><span>División</span><strong>${esc(division.label)} · ${esc(division.name)}</strong></div>
-          <div><span>Colores</span><strong>${esc(division.colors)}</strong></div>
+          <div><span>Nivel</span><strong>${esc(CLUB.level || "HaxCol · AF")}</strong></div>
           <div><span>Dorsal</span><strong>#${pad2(number)}</strong></div>
         </div>
         <p class="player-modal__foot">${esc(CLUB.name || "Chicago Bulls")} Haxball · ${esc(CLUB.season || "Temporada 2026")}</p>`;
@@ -429,9 +465,6 @@
     });
     $$("[data-team-role]").forEach((element) => {
       element.textContent = division.role;
-    });
-    $$("[data-team-colors]").forEach((element) => {
-      element.textContent = division.colors;
     });
     $$("[data-team-label]").forEach((element) => {
       element.textContent = division.label;
@@ -487,6 +520,80 @@
     });
 
     render();
+  }
+
+  /* ---------- Página del cuerpo técnico ---------- */
+  function initStaffPage() {
+    const staffRoot = $("[data-staff]");
+    if (!staffRoot || !STAFF) return;
+
+    $$("[data-staff-name]").forEach((element) => {
+      element.textContent = STAFF.name;
+    });
+    $$("[data-staff-desc]").forEach((element) => {
+      element.textContent = STAFF.description;
+    });
+    $$("[data-staff-count]").forEach((element) => {
+      element.textContent = `${STAFF_MEMBERS.length} DTs`;
+    });
+    $$("[data-staff-players]").forEach((element) => {
+      element.textContent = String(playingStaff().length);
+    });
+
+    const photoFrame = $("[data-staff-photo]");
+    if (photoFrame && STAFF.photo) {
+      photoFrame.classList.add("has-photo");
+      photoFrame.innerHTML = `
+        <img class="team-photo__img" src="${esc(STAFF.photo)}" alt="Foto oficial del ${esc(STAFF.name)}" loading="lazy" decoding="async">`;
+    }
+
+    const list = $("[data-staff-list]");
+    if (!list) return;
+
+    list.innerHTML = STAFF_MEMBERS.map((member, index) => {
+      const division = member.plays ? DIVISION_BY_ID.get(member.plays) : null;
+      const alias = member.alias ? `${esc(member.alias)} · ` : "";
+
+      if (division) {
+        const player = member.player || member.name;
+        const roster = rosterFor(division.id);
+        const rosterIndex = roster.findIndex((name) => name === player);
+        return `
+          <li class="staff-item">
+            <button class="player-card tone-${division.id}" type="button" data-player-open
+                    data-division="${esc(division.id)}" data-player-index="${rosterIndex >= 0 ? rosterIndex : index}"
+                    data-player-name="${esc(player)}"
+                    data-player-label="${esc(member.name)}"
+                    aria-label="Ver stats de ${esc(member.name)}, también juega en ${esc(division.label)}">
+              <span class="player-card__num">${pad2(index + 1)}</span>
+              <span class="player-card__avatar" aria-hidden="true">${esc(initials(member.name))}</span>
+              <span class="player-card__info">
+                <strong>${esc(member.name)}</strong>
+                <span>${alias}DT · Juega en ${esc(division.label)}</span>
+              </span>
+              <span class="player-card__div">${esc(division.label)}</span>
+            </button>
+          </li>`;
+      }
+
+      return `
+        <li class="staff-item">
+          <div class="player-card player-card--static tone-dt">
+            <span class="player-card__num">${pad2(index + 1)}</span>
+            <span class="player-card__avatar" aria-hidden="true">${esc(initials(member.name))}</span>
+            <span class="player-card__info">
+              <strong>${esc(member.name)}</strong>
+              <span>${alias}Director técnico</span>
+            </span>
+            <span class="player-card__div">${esc(STAFF.label)}</span>
+          </div>
+        </li>`;
+    }).join("");
+
+    list.addEventListener("click", (event) => {
+      const trigger = event.target.closest("[data-player-open]");
+      if (trigger) playerCardModal.open(trigger);
+    });
   }
 
   /* ---------- Estadísticas ---------- */
@@ -1134,10 +1241,11 @@
     initClocks();
     initStaticContent();
     renderDivisions();
-    renderColorGrid();
+    renderStaffFeature();
     renderDivisionSwitcher();
     initHomePanels();
     initTeamPage();
+    initStaffPage();
     initFixturePage();
     initStatsPage();
     initResultsPage();
