@@ -88,13 +88,71 @@
   background: var(--surface);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
   transform: rotate(-1.2deg);
+  isolation: isolate;
+  transition: transform 0.55s var(--ease), box-shadow 0.55s var(--ease), border-color 0.35s var(--ease);
+}
+.hero-shot::before {
+  content: "";
+  position: absolute;
+  inset: -18px;
+  z-index: -1;
+  border-radius: 20px;
+  background: radial-gradient(62% 72% at 68% 42%, rgba(206, 17, 65, 0.5), transparent 72%);
+  opacity: 0;
+  filter: blur(22px);
+  transition: opacity 0.5s var(--ease);
+}
+.hero-shot::after {
+  content: "";
+  position: absolute;
+  inset: 8px 8px auto;
+  aspect-ratio: 16 / 9;
+  z-index: 1;
+  border-radius: 6px;
+  background: linear-gradient(
+    112deg,
+    transparent 32%,
+    rgba(255, 255, 255, 0.2) 45%,
+    rgba(206, 17, 65, 0.55) 50%,
+    rgba(255, 255, 255, 0.18) 55%,
+    transparent 68%
+  );
+  background-size: 240% 100%;
+  opacity: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
 }
 .hero-shot img {
   width: 100%;
   aspect-ratio: 16 / 9;
   border-radius: 6px;
   object-fit: cover;
+  transition: transform 0.8s var(--ease), filter 0.5s var(--ease);
 }
+.hero-shot:hover {
+  transform: rotate(0deg) translateY(-7px) scale(1.015);
+  border-color: rgba(255, 61, 99, 0.55);
+  box-shadow:
+    0 32px 74px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 61, 99, 0.25),
+    0 0 46px rgba(206, 17, 65, 0.24);
+}
+.hero-shot:hover::before { opacity: 1; }
+.hero-shot:hover::after {
+  opacity: 1;
+  animation: bull-charge 1.15s var(--ease);
+}
+.hero-shot:hover img {
+  transform: scale(1.045);
+  filter: saturate(1.08) contrast(1.04);
+}
+@keyframes bull-charge {
+  0% { background-position: 130% 0; opacity: 0; }
+  18% { opacity: 1; }
+  100% { background-position: -35% 0; opacity: 1; }
+}
+.hero-shot figcaption { transition: color 0.3s var(--ease); }
+.hero-shot:hover figcaption span:first-child { color: var(--red-bright); }
 .hero-shot figcaption {
   display: flex;
   align-items: center;
@@ -118,6 +176,11 @@
   object-fit: contain;
   transform: rotate(-9deg);
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.55));
+  transition: transform 0.5s var(--ease), filter 0.5s var(--ease);
+}
+.hero-visual:hover .hero-visual__logo {
+  transform: rotate(-4deg) scale(1.07);
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.6)) drop-shadow(0 0 22px rgba(206, 17, 65, 0.5));
 }
 .hero-rail {
   display: flex;

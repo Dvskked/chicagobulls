@@ -60,7 +60,7 @@
   .team-hero__emblem { min-height: 230px; }
   .team-hero__emblem img { width: min(210px, 90%); }
   .fixture-layout { grid-template-columns: 1fr; }
-  .fixture-side { display: grid; grid-template-columns: 1fr 1fr; }
+  .fixture-side { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; }
   .clock-card { height: 100%; }
   .stats-summary { grid-template-columns: repeat(4, 1fr); }
   .museum-grid { grid-template-columns: repeat(2, 1fr); }
@@ -92,6 +92,7 @@
   .team-hero__meta { gap: 18px; }
   .team-hero__meta strong { font-size: 1.05rem; }
   .hero-shot { transform: none; }
+  .hero-shot:hover { transform: none; }
   .staff-feature__copy { padding: 22px; }
   .staff-feature__media { min-height: 210px; }
   .division-grid { grid-template-columns: repeat(2, 1fr); }

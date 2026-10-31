@@ -819,12 +819,17 @@
     if (!calendar) return;
 
     const fixtures = (Array.isArray(DATA.fixtures) ? DATA.fixtures : [])
-      .map((fixture) => ({ ...fixture, dateObj: toDate(fixture.date) }))
-      .filter((fixture) => fixture.dateObj)
-      .sort((a, b) => a.dateObj - b.dateObj);
+      .map((fixture) => ({ ...fixture, kind: "fixture", dateObj: toDate(fixture.date) }))
+      .filter((fixture) => fixture.dateObj);
+
+    const results = (Array.isArray(DATA.results) ? DATA.results : [])
+      .map((result) => ({ ...result, kind: "result", dateObj: toDate(result.date) }))
+      .filter((result) => result.dateObj);
+
+    const events = [...fixtures, ...results].sort((a, b) => a.dateObj - b.dateObj);
 
     $$("[data-fixture-total]").forEach((element) => {
-      element.textContent = pad2(fixtures.length);
+      element.textContent = pad2(events.length);
     });
 
     const title = $("[data-calendar-title]");
@@ -839,7 +844,7 @@
 
     const state = {
       view: startOfMonth(new Date()),
-      selected: null,
+      selected: dateKey(new Date()),
       division: "all",
     };
 
@@ -871,8 +876,39 @@
       }
     };
 
-    const filteredFixtures = () =>
-      fixtures.filter((fixture) => state.division === "all" || fixture.division === state.division);
+    const filteredEvents = () => events.filter((event) => itemMatchesDivision(event, state.division));
+
+    const leagueTag = (league) =>
+      `<span class="league-tag" style="--league:${league.color}"><i aria-hidden="true"></i>${esc(league.name)}</span>`;
+
+    const renderLeagueLegend = () => {
+      const legend = $("[data-league-legend]");
+      if (!legend) return;
+      legend.innerHTML = LEAGUES.map((league) => {
+        const total = events.filter((event) => leagueFor(event).id === league.id).length;
+        return `
+          <li class="league-legend__item" style="--league:${league.color}">
+            <i aria-hidden="true"></i>
+            <span>${esc(league.name)}</span>
+            <em>${total}</em>
+          </li>`;
+      }).join("");
+    };
+
+    const dayDots = (dayEvents) => {
+      const groups = new Map();
+      dayEvents.forEach((event) => {
+        const league = leagueFor(event);
+        const entry = groups.get(league.id) || { league, fixture: false };
+        if (event.kind === "fixture") entry.fixture = true;
+        groups.set(league.id, entry);
+      });
+      return [...groups.values()]
+        .map(({ league, fixture }) => `
+          <span class="cal-day__dot${fixture ? "" : " cal-day__dot--result"}"
+                style="--league:${league.color}" title="${esc(league.name)}"></span>`)
+        .join("");
+    };
 
     const renderCalendar = () => {
       const year = state.view.getFullYear();
@@ -882,14 +918,14 @@
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const todayKey = dateKey(new Date());
 
-      const monthFixtures = filteredFixtures().filter(
-        (fixture) => fixture.dateObj.getFullYear() === year && fixture.dateObj.getMonth() === month
+      const monthEvents = filteredEvents().filter(
+        (event) => event.dateObj.getFullYear() === year && event.dateObj.getMonth() === month
       );
       const byDay = new Map();
-      monthFixtures.forEach((fixture) => {
-        const key = dateKey(fixture.dateObj);
+      monthEvents.forEach((event) => {
+        const key = dateKey(event.dateObj);
         if (!byDay.has(key)) byDay.set(key, []);
-        byDay.get(key).push(fixture);
+        byDay.get(key).push(event);
       });
 
       let cells = "";
@@ -899,32 +935,46 @@
       for (let day = 1; day <= daysInMonth; day += 1) {
         const date = new Date(year, month, day);
         const key = dateKey(date);
-        const matches = byDay.get(key) || [];
+        const dayEvents = byDay.get(key) || [];
+        const fixtureCount = dayEvents.filter((event) => event.kind === "fixture").length;
+        const resultCount = dayEvents.filter((event) => event.kind === "result").length;
+
         const classes = ["cal-day"];
         if (key === todayKey) classes.push("cal-day--today");
         if (key === state.selected) classes.push("cal-day--selected");
-        const aria = `${fullDate(date)}${matches.length ? `, ${matches.length} partido${matches.length === 1 ? "" : "s"}` : ", sin partidos"}`;
+        if (dayEvents.length) classes.push("cal-day--has-events");
+
+        const ariaParts = [];
+        if (fixtureCount) ariaParts.push(`${fixtureCount} partido${fixtureCount === 1 ? "" : "s"}`);
+        if (resultCount) ariaParts.push(`${resultCount} resultado${resultCount === 1 ? "" : "s"}`);
+        const aria = `${fullDate(date)}, ${ariaParts.length ? ariaParts.join(" y ") : "sin actividad"}`;
+
         cells += `
-          <button class="${classes.join(" ")}" type="button" data-cal-day="${key}" aria-label="${esc(aria)}">
+          <button class="${classes.join(" ")}" type="button" data-cal-day="${key}"
+                  aria-label="${esc(aria)}" aria-pressed="${key === state.selected}">
             <span class="cal-day__num">${day}</span>
-            ${matches.length ? `<span class="cal-day__count">${matches.length}</span><span class="cal-day__dot"></span>` : ""}
+            ${dayEvents.length ? `<span class="cal-day__count">${dayEvents.length}</span><span class="cal-day__dots">${dayDots(dayEvents)}</span>` : ""}
           </button>`;
       }
 
       calendar.innerHTML = cells;
       if (title) title.textContent = `${monthName(state.view)} ${year}`;
       if (subtitle) {
-        subtitle.textContent = `${monthFixtures.length} partido${monthFixtures.length === 1 ? "" : "s"} en el mes · horarios en tu hora local`;
+        const totalFixtures = monthEvents.filter((event) => event.kind === "fixture").length;
+        const totalResults = monthEvents.filter((event) => event.kind === "result").length;
+        subtitle.textContent =
+          `${totalFixtures} partido${totalFixtures === 1 ? "" : "s"} · ` +
+          `${totalResults} resultado${totalResults === 1 ? "" : "s"} en el mes · horarios en tu hora local`;
       }
     };
 
     const emptyFixtureState = (selectedDate) => {
       const heading = selectedDate
-        ? `Sin partidos el ${fullDate(selectedDate).toLowerCase()}`
-        : `Sin partidos en ${monthName(state.view)}`;
+        ? `Sin actividad el ${fullDate(selectedDate).toLowerCase()}`
+        : `Sin actividad en ${monthName(state.view)}`;
       const copy = selectedDate
-        ? "No hay encuentros programados para ese día. Probá con otra fecha o cambiá el filtro de división."
-        : "El calendario todavía no tiene partidos cargados. Cuando se publique el fixture, los encuentros aparecerán acá automáticamente.";
+        ? "No hay partidos ni resultados cargados para ese día. Probá con otra fecha o cambiá el filtro de división."
+        : "El calendario todavía no tiene partidos ni resultados cargados. Cuando se publiquen, van a aparecer acá automáticamente.";
       return `
         <div class="empty-state">
           <span class="empty-state__icon">${icons.calendar}</span>
@@ -934,25 +984,28 @@
     };
 
     const fixtureCard = (fixture) => {
-      const division = DIVISION_BY_ID.get(fixture.division);
-      if (!division) return "";
+      const league = leagueFor(fixture);
       const isHome = fixture.venue !== "away";
       const opponent = fixture.opponent || "Rival";
       const matchup = isHome ? `Chicago Bulls vs ${opponent}` : `${opponent} vs Chicago Bulls`;
       return `
-        <article class="fixture-card tone-${division.id}">
+        <article class="fixture-card" style="--league:${league.color}">
           <div class="fixture-card__date">
             <span class="fixture-card__day">${dayLabel(fixture.dateObj)}</span>
             <span class="fixture-card__month">${shortMonth(fixture.dateObj)}</span>
           </div>
           <div class="fixture-card__info">
             <div class="fixture-card__meta">
-              <span class="div-badge">${esc(division.label)}</span>
+              ${leagueTag(league)}
               <span>${esc(fixture.competition || "Partido")}</span>
-              <span>${isHome ? "Local" : "Visitante"}</span>
+              ${fixture.note ? `<span>${esc(fixture.note)}</span>` : ""}
             </div>
             <h3>${esc(matchup)}</h3>
-            <div class="fixture-card__meta"><span>${weekdayLabel(fixture.dateObj)}</span></div>
+            <div class="fixture-card__meta">
+              <span class="squad-tag">${esc(squadLabel(fixture) || "Plantel")}</span>
+              <span>${isHome ? "Local" : "Visitante"}</span>
+              <span>${weekdayLabel(fixture.dateObj)}</span>
+            </div>
           </div>
           <div class="fixture-card__time">
             <strong>${timeLabel(fixture.dateObj)}</strong>
@@ -961,40 +1014,95 @@
         </article>`;
     };
 
+    const resultCard = (result) => {
+      const league = leagueFor(result);
+      const scoreFor = Number(result.scoreFor) || 0;
+      const scoreAgainst = Number(result.scoreAgainst) || 0;
+      const outcome = scoreFor > scoreAgainst ? "win" : scoreFor < scoreAgainst ? "loss" : "draw";
+      const outcomeText = outcome === "win" ? "Victoria" : outcome === "loss" ? "Derrota" : "Empate";
+      const opponent = result.opponent || "Rival";
+      return `
+        <article class="result-card result-card--agenda" style="--accent:${league.color}">
+          <div class="result-card__head">
+            ${leagueTag(league)}
+            <span>${esc(result.competition || "Partido")}</span>
+            <span class="squad-tag">${esc(squadLabel(result) || "Plantel")}</span>
+            <time datetime="${esc(result.date)}">${timeLabel(result.dateObj)}</time>
+          </div>
+          <div class="result-card__match">
+            <div class="result-team">
+              <span class="result-team__crest result-team__crest--club"><img src="img/logo.png" alt=""></span>
+              <strong>Chicago Bulls</strong>
+            </div>
+            <div class="result-score">
+              <strong>${scoreFor}<span>–</span>${scoreAgainst}</strong>
+              <span class="result-status result-status--${outcome}">${outcomeText}</span>
+            </div>
+            <div class="result-team result-team--right">
+              <strong>${esc(opponent)}</strong>
+              <span class="result-team__crest">${esc(initials(opponent))}</span>
+            </div>
+          </div>
+          <div class="result-card__venue">${result.venue === "away" ? "Visitante" : "Local"} · ${esc(league.name)}</div>
+        </article>`;
+    };
+
+    const agendaGroup = (label, items, renderer, emptyCopy) => `
+      <section class="agenda-group">
+        <div class="agenda-group__head">
+          <h3 class="agenda-group__title">${esc(label)}</h3>
+          <span class="agenda-group__count">${items.length}</span>
+        </div>
+        ${items.length
+          ? `<div class="agenda-group__list">${items.map(renderer).join("")}</div>`
+          : `<p class="agenda-group__empty">${esc(emptyCopy)}</p>`}
+      </section>`;
+
     const renderList = () => {
       if (!list) return;
       const year = state.view.getFullYear();
       const month = state.view.getMonth();
-      let visible = filteredFixtures().filter(
-        (fixture) => fixture.dateObj.getFullYear() === year && fixture.dateObj.getMonth() === month
-      );
+      const selectedDate = state.selected ? new Date(`${state.selected}T12:00:00`) : null;
 
-      if (state.selected) {
-        visible = visible.filter((fixture) => dateKey(fixture.dateObj) === state.selected);
-      }
+      const visible = filteredEvents().filter((event) => {
+        if (selectedDate) return dateKey(event.dateObj) === state.selected;
+        return event.dateObj.getFullYear() === year && event.dateObj.getMonth() === month;
+      });
 
-      const selectedDate = state.selected
-        ? new Date(`${state.selected}T12:00:00`)
-        : null;
+      const dayFixtures = visible.filter((event) => event.kind === "fixture");
+      const dayResults = visible.filter((event) => event.kind === "result");
 
       if (listTitle) {
         listTitle.textContent = selectedDate
-          ? `Partidos del ${fullDate(selectedDate).toLowerCase()}`
-          : `Partidos de ${monthName(state.view).toLowerCase()}`;
+          ? `Agenda del ${fullDate(selectedDate).toLowerCase()}`
+          : `Agenda de ${monthName(state.view).toLowerCase()}`;
       }
       if (count) {
-        count.textContent = `${visible.length} partido${visible.length === 1 ? "" : "s"}`;
+        count.textContent = `${visible.length} evento${visible.length === 1 ? "" : "s"}`;
       }
 
-      list.innerHTML = visible.length
-        ? visible.map(fixtureCard).join("")
-        : emptyFixtureState(selectedDate);
+      if (!visible.length) {
+        list.innerHTML = emptyFixtureState(selectedDate);
+        return;
+      }
+
+      if (selectedDate) {
+        list.innerHTML = [
+          agendaGroup("Fixture", dayFixtures, fixtureCard, "No hay partidos programados para este día."),
+          agendaGroup("Resultados", dayResults, resultCard, "No hay resultados registrados para este día."),
+        ].join("");
+        return;
+      }
+
+      list.innerHTML = [
+        dayFixtures.length ? agendaGroup("Fixture", dayFixtures, fixtureCard, "") : "",
+        dayResults.length ? agendaGroup("Resultados", dayResults, resultCard, "") : "",
+      ].join("");
     };
 
     const render = () => {
       divisionChips(filters, state.division, (divisionId) => {
         state.division = divisionId;
-        state.selected = null;
         render();
       });
       renderCalendar();
@@ -1035,6 +1143,7 @@
       });
     }
 
+    renderLeagueLegend();
     render();
   }
 
@@ -1045,33 +1154,40 @@
 
     const results = (Array.isArray(DATA.results) ? DATA.results : [])
       .map((result) => ({ ...result, dateObj: toDate(result.date) }))
-      .filter((result) => result.dateObj)
-      .sort((a, b) => b.dateObj - a.dateObj);
+      .sort((a, b) => {
+        if (a.dateObj && b.dateObj) return b.dateObj - a.dateObj;
+        if (a.dateObj) return -1;
+        if (b.dateObj) return 1;
+        return 0;
+      });
 
     const filters = $("[data-results-filters]");
     const empty = $("[data-results-empty]");
     const counters = $$("[data-results-count]");
     const state = { division: "all" };
 
-    const dateLabel = (date) =>
-      new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", year: "numeric" })
-        .format(date)
-        .replace(".", "");
+    const dateLabel = (result) =>
+      result.dateObj
+        ? new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", year: "numeric" })
+            .format(result.dateObj)
+            .replace(".", "")
+        : result.dateLabel || "Fecha sin registrar";
 
     const resultCard = (result) => {
-      const division = DIVISION_BY_ID.get(result.division);
-      if (!division) return "";
+      const league = leagueFor(result);
       const scoreFor = Number(result.scoreFor) || 0;
       const scoreAgainst = Number(result.scoreAgainst) || 0;
       const outcome = scoreFor > scoreAgainst ? "win" : scoreFor < scoreAgainst ? "loss" : "draw";
       const outcomeText = outcome === "win" ? "Victoria" : outcome === "loss" ? "Derrota" : "Empate";
       const opponent = result.opponent || "Rival";
+      const dateText = dateLabel(result);
       return `
-        <article class="result-card tone-${division.id}">
+        <article class="result-card" style="--accent:${league.color}">
           <div class="result-card__head">
-            <span class="div-badge">${esc(division.label)}</span>
+            <span class="league-tag" style="--league:${league.color}"><i aria-hidden="true"></i>${esc(league.name)}</span>
+            <span class="squad-tag">${esc(squadLabel(result) || "Plantel")}</span>
             <span>${esc(result.competition || "Partido")}</span>
-            <time datetime="${esc(result.date)}">${esc(dateLabel(result.dateObj))}</time>
+            <time${result.dateObj ? ` datetime="${esc(result.date)}"` : ""}>${esc(dateText)}</time>
           </div>
           <div class="result-card__match">
             <div class="result-team">
@@ -1087,7 +1203,10 @@
               <span class="result-team__crest">${esc(initials(opponent))}</span>
             </div>
           </div>
-          <div class="result-card__venue">${result.venue === "away" ? "Visitante" : "Local"} · ${esc(division.name)}</div>
+          <div class="result-card__venue">
+            ${result.venue === "away" ? "Visitante" : "Local"} · ${esc(league.name)}
+            ${result.note ? `<span class="result-card__note">${esc(result.note)}</span>` : ""}
+          </div>
         </article>`;
     };
 
@@ -1096,9 +1215,7 @@
         state.division = divisionId;
         render();
       });
-      const visible = results.filter(
-        (result) => state.division === "all" || result.division === state.division
-      );
+      const visible = results.filter((result) => itemMatchesDivision(result, state.division));
       container.innerHTML = visible.map(resultCard).join("");
       if (empty) empty.hidden = visible.length > 0;
       counters.forEach((element) => {
@@ -1193,8 +1310,12 @@
 
     const results = (Array.isArray(DATA.results) ? DATA.results : [])
       .map((result) => ({ ...result, dateObj: toDate(result.date) }))
-      .filter((result) => result.dateObj)
-      .sort((a, b) => b.dateObj - a.dateObj);
+      .sort((a, b) => {
+        if (a.dateObj && b.dateObj) return b.dateObj - a.dateObj;
+        if (a.dateObj) return -1;
+        if (b.dateObj) return 1;
+        return 0;
+      });
 
     if (nextContainer) {
       const now = new Date();
@@ -1208,7 +1329,7 @@
             <a class="text-link" href="fixture.html">Ver calendario ${icons.arrow}</a>
           </div>`;
       } else {
-        const division = DIVISION_BY_ID.get(next.division);
+        const league = leagueFor(next);
         const dateText = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short" })
           .format(next.dateObj)
           .replace(".", "");
@@ -1228,7 +1349,8 @@
               </div>
             </div>
             <div class="next-match__meta">
-              ${division ? `<span class="div-badge tone-${division.id}">${esc(division.label)}</span>` : ""}
+              <span class="league-tag" style="--league:${league.color}"><i aria-hidden="true"></i>${esc(league.name)}</span>
+              <span class="squad-tag">${esc(squadLabel(next) || "Plantel")}</span>
               <span><strong>${esc(capitalize(dateText))}</strong> · ${timeText} hs</span>
               <span>${esc(next.competition || "Partido")}</span>
             </div>
@@ -1247,19 +1369,21 @@
           </div>`;
       } else {
         resultsContainer.innerHTML = results.slice(0, 3).map((result) => {
-          const division = DIVISION_BY_ID.get(result.division);
+          const league = leagueFor(result);
           const scoreFor = Number(result.scoreFor) || 0;
           const scoreAgainst = Number(result.scoreAgainst) || 0;
           const outcome = scoreFor > scoreAgainst ? "win" : scoreFor < scoreAgainst ? "loss" : "draw";
           const outcomeText = outcome === "win" ? "V" : outcome === "loss" ? "D" : "E";
-          const dateText = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short" })
-            .format(result.dateObj)
-            .replace(".", "");
+          const dateText = result.dateObj
+            ? new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short" })
+                .format(result.dateObj)
+                .replace(".", "")
+            : result.dateLabel || "Sin fecha";
           return `
             <div class="mini-result">
               <div class="mini-result__teams">
                 <strong>Chicago Bulls vs ${esc(result.opponent || "Rival")}</strong>
-                <span>${esc(division ? division.label : "")} · ${esc(result.competition || "Partido")} · ${esc(dateText)}</span>
+                <span>${esc(league.name)} · ${esc(squadLabel(result) || "Plantel")} · ${esc(result.competition || "Partido")} · ${esc(dateText)}</span>
               </div>
               <div class="mini-result__score">${scoreFor}–${scoreAgainst}<em class="${outcome}">${outcomeText}</em></div>
             </div>`;

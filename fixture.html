@@ -103,11 +103,11 @@
       </nav>
       <span class="eyebrow">Calendario oficial</span>
       <h1>Fixture</h1>
-      <p>Todos los partidos del club, con fecha y hora convertidas automáticamente a tu zona horaria.</p>
+      <p>Calendario y resultados del club en un solo lugar: filtrá por liga, elegí un día y mirá qué se jugó y qué viene.</p>
       <div class="page-hero__meta">
         <div><span>Tu hora local</span><strong data-tz-name>Hora local</strong></div>
         <div><span>Divisiones</span><strong>05</strong></div>
-        <div><span>Partidos cargados</span><strong data-fixture-total>00</strong></div>
+        <div><span>Eventos cargados</span><strong data-fixture-total>00</strong></div>
       </div>
     </div>
   </section>
@@ -134,6 +134,7 @@
           <div class="calendar-legend">
             <span><i></i>Hoy</span>
             <span><i class="dot"></i>Partido</span>
+            <span><i class="dot dot--result"></i>Resultado</span>
             <span><i class="sel"></i>Seleccionado</span>
           </div>
         </div>
@@ -145,6 +146,11 @@
             <span class="clock-card__tz" data-tz-name>Zona horaria</span>
           </div>
           <div class="side-card reveal">
+            <h3>Ligas</h3>
+            <ul class="league-legend" data-league-legend aria-label="Ligas del club"></ul>
+            <p class="side-note">Cada punto del calendario lleva el color de su liga. El punto relleno es un partido y el aro, un resultado.</p>
+          </div>
+          <div class="side-card reveal">
             <h3>Filtrar por división</h3>
             <div class="chips" role="group" data-fixture-filters aria-label="Filtrar fixture por división"></div>
             <p class="side-note">Los horarios se convierten automáticamente a tu hora local. No necesitás configurar nada.</p>
@@ -154,8 +160,8 @@
 
       <div class="fixture-list-head">
         <div>
-          <span class="eyebrow">Partidos</span>
-          <h2 data-fixture-list-title>Este mes</h2>
+          <span class="eyebrow">Agenda</span>
+          <h2 data-fixture-list-title>Agenda del mes</h2>
         </div>
         <span class="roster-count" data-fixture-count>0 partidos</span>
       </div>

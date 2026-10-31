@@ -8,9 +8,9 @@ Sitio web del club **Chicago Bulls** de Haxball. Es un sitio estático multipág
 - **Categorías** (`categorias.html`): selector de D1 a D5 con foto oficial de cada plantilla.
 - **Plantillas** (`d1.html` a `d5.html`): jugadores clickeables, buscador, fichas emergentes con estadísticas y foto grupal.
 - **Cuerpo técnico** (`dt.html`): directores técnicos del club, con acceso a la ficha de los que también juegan.
-- **Fixture** (`fixture.html`): calendario mensual, reloj en vivo y horarios en la zona local del visitante.
+- **Fixture** (`fixture.html`): calendario mensual con colores por liga, agenda diaria de fixture y resultados, reloj en vivo y horarios en la zona local del visitante.
 - **Stats** (`stats.html`): tabla de PJ, goles, asistencias y vallas invictas (CS), con filtros y ordenamiento.
-- **Resultados** (`resultados.html`): todos los resultados en una sola lista, filtrables por división.
+- **Resultados** (`resultados.html`): todos los resultados con liga, divisiones y fecha, filtrables por división.
 - **Museo** (`museo.html`): palmarés colectivo y premios individuales.
 
 Divisiones: D1 Chicago Bulls, D2 Windy City Bulls, D3 Bulls Academy, D4 Dynasty 96 y D5 The Madhouse. Fundador del club: **satan**. El proyecto compite al nivel de **HaxCol** y **American Futsal (AF)**. Plantillas actuales: 68 jugadores (D1 13, D2 13, D3 15, D4 14 y D5 13) y 7 directores técnicos.
@@ -130,39 +130,73 @@ stats: {
 - `played` (PJ), `goals` (G), `assists` (A) y `cleanSheets` (CS).
 - El nombre debe coincidir exactamente con el de `rosters` (incluidas mayúsculas y símbolos).
 
+### Ligas
+
+Cada partido y resultado referencia una liga por `id`. Ese color se usa en la leyenda del calendario, en los puntos de cada día y en el borde de las tarjetas:
+
+```js
+leagues: [
+  { id: "mls", name: "MLS", color: "#3ddc84" },
+  { id: "haxcol", name: "HaxCol", color: "#4d8dff" },
+  { id: "laliga", name: "LaLiga", color: "#ff4d5e" },
+  { id: "haxcl", name: "HaxCL", color: "#b57bff" },
+  { id: "amistoso", name: "Amistoso", color: "#9aa0ad" },
+]
+```
+
 ### Fixture
 
 ```js
 fixtures: [
   {
-    date: "2026-11-08T21:00:00-03:00", // ISO con zona horaria
-    division: "d1",
-    opponent: "Rival FC",
-    competition: "Liga Elite",
-    venue: "home",                    // "home" = local, "away" = visitante
+    date: "2026-10-31T18:00:00-05:00", // ISO con zona horaria
+    division: "d3",                    // división principal
+    squads: ["d3", "d4", "d5"],        // divisiones convocadas
+    league: "haxcl",
+    competition: "Liga",
+    opponent: "Juventus",
+    venue: "home",                     // "home" = local, "away" = visitante
+    note: "Play offs",                 // opcional
   },
 ]
 ```
 
-La hora se convierte automáticamente a la zona horaria del visitante. Si la lista está vacía, se muestra un estado vacío elegante.
+La hora se convierte automáticamente a la zona horaria del visitante. El filtro por división usa `squads`, así que un partido con varias categorías aparece en todas ellas. Si `squads` falta, se toma `division`. Si la lista está vacía, se muestra un estado vacío elegante.
 
 ### Resultados
 
-Todos los resultados van en una única lista, sin separar por división:
+Todos los resultados van en una única lista, con su liga y sus divisiones convocadas:
 
 ```js
 results: [
   {
-    date: "2026-11-08T21:00:00-03:00",
+    date: "2026-10-24T20:00:00-05:00",
     division: "d2",
-    opponent: "Rival FC",
-    competition: "Liga de Ascenso",
+    squads: ["d2", "d3"],
+    league: "mls",
+    competition: "Liga",
+    opponent: "Cereal Killers",
     scoreFor: 4,
+    scoreAgainst: 3,
+    venue: "away",
+  },
+  {
+    date: null,                        // sin fecha: no entra al calendario
+    dateLabel: "Fecha sin registrar",  // texto que se muestra en Resultados
+    division: "d1",
+    squads: ["d1"],
+    league: "amistoso",
+    competition: "Amistoso",
+    opponent: "Chelsea",
+    scoreFor: 3,
     scoreAgainst: 2,
     venue: "home",
+    note: "Sin stats por ser amistoso.",
   },
 ]
 ```
+
+Los resultados con `date: null` se listan en `resultados.html` con `dateLabel`, pero no se ubican en el calendario. El calendario combina fixture y resultados: al seleccionar un día muestra los grupos **Fixture** y **Resultados**.
 
 ### Museo
 
