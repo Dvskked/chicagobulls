@@ -280,7 +280,7 @@ window.CB = {
       date: "2026-10-31T19:00:00-05:00",
       division: "d2",
       squads: ["d2","d3", "d4", "d5"],
-      league: "Vivet",
+      league: "vivet",
       competition: "Liga",
       opponent: "Pollolandia",
       venue: "home",
