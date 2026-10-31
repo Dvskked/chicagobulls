@@ -1,0 +1,57 @@
+partido 1:
+
+Cereal killer's VS Chicago Bulls
+Liga: MLS (Liga)
+fecha: 24/10/2026
+hora: 20:00 (HORA COLOMBIA)
+convocados: D2, D3
+
+
+
+partido 2:
+
+Bulls Vs Red devils - (Play offs)
+Liga: Haxcol (Copa promesa)
+fecha: 26/10/2026
+hora: 20:20 (HORA COLOMBIA)
+convocados: D2, D3, D4, D5
+
+
+
+partido 3:
+
+Chicago Bulls VS Juan Aurich
+Liga: MLS (Liga)
+fecha: 30/10/2026
+hora: 19:15 (HORA COLOMBIA)
+convocados: D2, D3
+
+
+
+partido 4:
+
+Bulls Vs Rappi Gang - (Play offs)
+Liga: Haxcol (Copa promesa)
+fecha: 31/10/2026
+hora: 19:00 (HORA COLOMBIA)
+convocados: D2, D3, D4, D5
+
+
+
+partido 5:
+
+Chicago Bulls Vs Deportivo de la coruña
+Liga: Laliga (Liga)
+fecha: 31/10/2026
+hora: 20:10 (HORA OCLOMBIA)
+convocados: D2, D3, D4, D5
+
+
+
+partido 6:
+
+Chicago Bulls Vs Juventus
+Liga: HaxCL (Liga)
+fecha: 31/10/2026
+hora: 18:00 (HORA OCLOMBIA)
+convocados: D3, D4, D5
